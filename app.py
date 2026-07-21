@@ -79,7 +79,7 @@ PAGE = r"""<!doctype html>
     :root { --ink:#162235; --muted:#66758a; --line:#dce5ef; --blue:#1769e0; --soft:#f5f8fc; --green:#16794a; }
     * { box-sizing:border-box; } body { margin:0; color:var(--ink); font:15px/1.5 Inter,Segoe UI,Arial,sans-serif; background:linear-gradient(135deg,#eef5ff,#f8fbff 55%,#f1faf7); }
     header { padding:28px max(22px, calc((100% - 1120px)/2)); display:flex; justify-content:space-between; align-items:center; }
-    .brand { font-weight:800; font-size:22px; letter-spacing:-.4px; } .brand span { color:var(--blue); } .pill { color:var(--green); background:#e7f7ee; padding:7px 12px; border-radius:999px; font-size:12px; font-weight:700; }
+    .brand { font-weight:800; font-size:22px; letter-spacing:-.4px; } .brand span { color:var(--blue); } .pill { color:var(--green); background:#e7f7ee; padding:7px 12px; border-radius:999px; font-size:12px; font-weight:700; } .teleprompter-link { color:#fff; background:var(--blue); padding:9px 13px; border-radius:9px; text-decoration:none; font-weight:800; font-size:13px; }
     main { max-width:1120px; margin:12px auto 60px; padding:0 22px; } h1 { max-width:760px; font-size:42px; line-height:1.08; letter-spacing:-1.5px; margin:28px 0 12px; } .lead { max-width:720px; color:var(--muted); font-size:17px; margin-bottom:28px; }
     .grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start; } .card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 12px 30px #1d4e8910; } h2 { margin:0 0 8px; font-size:18px; } label { display:block; color:var(--muted); font-size:13px; font-weight:700; margin:14px 0 7px; } textarea { width:100%; min-height:245px; resize:vertical; border:1px solid var(--line); border-radius:12px; padding:13px; font:14px/1.5 inherit; color:var(--ink); } textarea:focus { outline:3px solid #1769e020; border-color:var(--blue); }
     .actions { display:flex; gap:10px; margin-top:14px; align-items:center; } button { border:0; border-radius:10px; padding:11px 16px; font-weight:800; cursor:pointer; } .primary { background:var(--blue); color:#fff; } .secondary { background:#edf3fa; color:var(--ink); } button:disabled { opacity:.6; cursor:wait; } .hint { color:var(--muted); font-size:12px; }
@@ -88,7 +88,7 @@ PAGE = r"""<!doctype html>
   </style>
 </head>
 <body>
-  <header><div class="brand"><span>Ops</span>Pilot AI</div><div class="pill">Human review required</div></header>
+  <header><div class="brand"><span>Ops</span>Pilot AI</div><div><a class="teleprompter-link" href="/teleprompter">Abrir teleprompter</a> <span class="pill">Human review required</span></div></header>
   <main>
     <h1>De procedimento técnico a plano de ação.</h1>
     <p class="lead">Cole um procedimento, incidente ou nota de manutenção. O OpsPilot organiza o contexto em checklist, riscos, verificação e escalonamento.</p>
