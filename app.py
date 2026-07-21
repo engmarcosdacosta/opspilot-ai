@@ -135,7 +135,16 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:
-        if urlparse(self.path).path != "/":
+        path = urlparse(self.path).path
+        if path == "/teleprompter":
+            body = Path(__file__).with_name("teleprompter.html").read_text(encoding="utf-8").encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if path != "/":
             self._json(404, {"error": "Not found"})
             return
         body = PAGE.replace("%EXAMPLE%", json.dumps(DEMO_PROCEDURE, ensure_ascii=False))

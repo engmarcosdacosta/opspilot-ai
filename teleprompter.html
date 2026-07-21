@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpsPilot AI — Teleprompter</title>
+  <style>
+    :root { --bg:#080b12; --panel:#111827; --line:#273449; --text:#f8fafc; --muted:#9aa9bd; --blue:#4f8cff; --accent:#9fc1ff; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 Segoe UI,Arial,sans-serif; }
+    header { min-height:70px; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:#0d1320; }
+    .brand { font-weight:800; font-size:19px; } .brand span { color:var(--blue); } .tag { color:var(--muted); font-size:12px; }
+    main { display:grid; grid-template-columns:340px 1fr; min-height:calc(100vh - 70px); } aside { padding:22px; border-right:1px solid var(--line); background:var(--panel); } h1 { margin:0 0 6px; font-size:22px; } p { color:var(--muted); margin:0 0 18px; }
+    label { display:block; color:var(--muted); font-size:12px; font-weight:700; margin:16px 0 6px; } textarea { width:100%; height:310px; resize:vertical; padding:12px; border:1px solid var(--line); border-radius:10px; background:#0a0f19; color:var(--text); font:14px/1.5 inherit; } textarea:focus { outline:2px solid var(--blue); }
+    .row { display:flex; gap:9px; align-items:center; } input[type=range] { width:100%; accent-color:var(--blue); } output { min-width:45px; color:var(--accent); text-align:right; } button { border:1px solid var(--line); border-radius:9px; padding:10px 12px; background:#1a2638; color:var(--text); font-weight:700; cursor:pointer; } button:hover { border-color:var(--blue); } .primary { background:var(--blue); border-color:var(--blue); color:#fff; } .buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; } .help { margin-top:20px; padding-top:14px; border-top:1px solid var(--line); font-size:12px; }
+    .stage { position:relative; overflow:hidden; background:linear-gradient(#05070b,#101725); } .stage:before, .stage:after { content:""; position:absolute; z-index:2; left:0; right:0; height:24%; pointer-events:none; } .stage:before { top:0; background:linear-gradient(#05070b,transparent); } .stage:after { bottom:0; background:linear-gradient(transparent,#05070b); }
+    .guide { position:absolute; top:36%; left:7%; right:7%; border-top:1px solid #4f8cff66; border-bottom:1px solid #4f8cff66; height:27%; pointer-events:none; z-index:3; } .scroll { height:100%; overflow-y:auto; padding:44vh 10% 55vh; scrollbar-width:none; } .scroll::-webkit-scrollbar { display:none; } .script { max-width:1000px; margin:auto; white-space:pre-wrap; font-size:42px; line-height:1.35; font-weight:650; letter-spacing:.2px; text-align:center; color:#fff; }
+    .state { position:absolute; z-index:4; top:16px; right:20px; padding:6px 10px; border-radius:99px; background:#162236cc; color:var(--muted); font-size:12px; } .progress { position:absolute; z-index:4; left:0; bottom:0; height:4px; width:0; background:var(--blue); }
+    @media (max-width:800px) { main { grid-template-columns:1fr; } aside { border-right:0; border-bottom:1px solid var(--line); } .stage { min-height:70vh; } .script { font-size:32px; } }
+  </style>
+</head>
+<body>
+  <header><div class="brand"><span>Ops</span>Pilot AI · Teleprompter</div><div class="tag">Espaço, R = reiniciar, F = tela cheia</div></header>
+  <main>
+    <aside>
+      <h1>Roteiro de gravação</h1>
+      <p>Edite o texto, ajuste a leitura e grave seu vídeo de 1 minuto.</p>
+      <label for="source">Texto</label>
+      <textarea id="source">Olá, este é o OpsPilot AI, uma ferramenta que transforma procedimentos técnicos em planos de ação claros e revisáveis.
+
+Neste exemplo, uma bomba apresenta vibração anormal. Informações assim normalmente ficam em textos longos e difíceis de executar.
+
+Ao clicar em Gerar plano, o sistema organiza o contexto operacional e gera o objetivo, pré-requisitos, checklist, riscos, critérios de verificação e orientação de escalonamento.
+
+O operador continua no controle: toda recomendação deve ser revisada antes da execução.
+
+O Codex foi usado para desenvolver e revisar o protótipo. O GPT-5.6 orientou o desenho da transformação dos procedimentos em planos estruturados.
+
+Este é o OpsPilot AI.</textarea>
+      <label for="speed">Velocidade</label><div class="row"><input id="speed" type="range" min="8" max="180" value="52"><output id="speedOut">52 px/s</output></div>
+      <label for="size">Tamanho da fonte</label><div class="row"><input id="size" type="range" min="24" max="72" value="42"><output id="sizeOut">42 px</output></div>
+      <div class="buttons"><button class="primary" id="play">▶ Iniciar</button><button id="reset">↺ Reiniciar</button><button id="full">⛶ Tela cheia</button></div>
+      <div class="help">Dica: posicione o navegador perto da câmera, clique em Iniciar e leia olhando para a lente. O botão Iniciar também pode ser acionado pela barra de espaço.</div>
+    </aside>
+    <section class="stage" id="stage"><div class="state" id="state">Pronto</div><div class="guide"></div><div class="scroll" id="scroll"><div class="script" id="script"></div></div><div class="progress" id="progress"></div></section>
+  </main>
+  <script>
+    const source=document.querySelector('#source'), scroll=document.querySelector('#scroll'), script=document.querySelector('#script'), play=document.querySelector('#play'), state=document.querySelector('#state'), progress=document.querySelector('#progress');
+    const speed=document.querySelector('#speed'), size=document.querySelector('#size'); let running=false, last=0, frame;
+    function render(){ script.textContent=source.value; scroll.scrollTop=0; updateProgress(); }
+    function updateProgress(){ const max=scroll.scrollHeight-scroll.clientHeight; progress.style.width=(max>0?(scroll.scrollTop/max)*100:0)+'%'; }
+    function tick(now){ if(!running)return; if(last) scroll.scrollTop += (now-last)*Number(speed.value)/1000; last=now; updateProgress(); if(scroll.scrollTop < scroll.scrollHeight-scroll.clientHeight) frame=requestAnimationFrame(tick); else stop(); }
+    function start(){ if(running)return; running=true; last=0; play.textContent='⏸ Pausar'; state.textContent='Lendo'; frame=requestAnimationFrame(tick); }
+    function stop(){ running=false; cancelAnimationFrame(frame); play.textContent='▶ Iniciar'; state.textContent='Pausado'; last=0; }
+    play.onclick=()=>running?stop():start(); document.querySelector('#reset').onclick=()=>{ stop(); scroll.scrollTop=0; state.textContent='Pronto'; updateProgress(); }; source.oninput=render; scroll.onscroll=updateProgress;
+    speed.oninput=()=>document.querySelector('#speedOut').textContent=speed.value+' px/s'; size.oninput=()=>{ script.style.fontSize=size.value+'px'; document.querySelector('#sizeOut').textContent=size.value+' px'; };
+    document.querySelector('#full').onclick=()=>document.querySelector('#stage').requestFullscreen?.(); document.addEventListener('keydown',e=>{ if(e.target===source)return; if(e.code==='Space'){e.preventDefault(); running?stop():start();} if(e.key.toLowerCase()==='r')document.querySelector('#reset').click(); if(e.key.toLowerCase()==='f')document.querySelector('#full').click(); }); render();
+  </script>
+</body>
+</html>

@@ -44,6 +44,8 @@ python app.py
 
 Open `http://127.0.0.1:8000` in a browser. Click **Gerar plano** to see an executable checklist, risks, verification criteria, and escalation guidance.
 
+The teleprompter for the demo video is available at `http://127.0.0.1:8000/teleprompter`.
+
 Without `OPENAI_API_KEY`, the app uses a clearly labeled deterministic demo result, which is useful for recording a product walkthrough. With the key set, it uses the OpenAI Responses API.
 
 For real model mode, set `OPENAI_API_KEY` before starting the server:
