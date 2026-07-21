@@ -33,23 +33,38 @@ Operational knowledge is often trapped in long documents and scattered notes. Op
 
 ## Quick start
 
-Requirements: Python 3.10+ and an OpenAI API key.
+Requirements: Python 3.10+. The browser demo works without an API key in local demo mode.
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+python app.py
+```
+
+Open `http://127.0.0.1:8000` in a browser. Click **Gerar plano** to see an executable checklist, risks, verification criteria, and escalation guidance.
+
+Without `OPENAI_API_KEY`, the app uses a clearly labeled deterministic demo result, which is useful for recording a product walkthrough. With the key set, it uses the OpenAI Responses API.
+
+For real model mode, set `OPENAI_API_KEY` before starting the server:
+
+```powershell
 $env:OPENAI_API_KEY="your-api-key"
 python app.py
 ```
 
-The prototype reads a procedure from `example_procedure.md` and prints a structured OpsPilot plan.
-
 Set `OPENAI_MODEL` if your account uses a different available model. The default is `gpt-5.6` to match the Build Week workflow.
+
+## Demo walkthrough
+
+1. Run `python app.py`.
+2. Open `http://127.0.0.1:8000`.
+3. Keep the example procedure, click **Gerar plano**, and mark two checklist items.
+4. Explain that the output remains human-reviewable and includes an explicit escalation path.
 
 ## Repository status
 
-This is a Build Week prototype starter. The next iteration is a small browser UI with document upload, retrieval over approved references, editable checklists, and an audit trail.
+This is a Build Week prototype with a browser UI. Next iterations can add document upload, retrieval over approved references, persistence, and an audit trail.
 
 ## Safety and privacy
 
