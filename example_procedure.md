@@ -1,5 +1,5 @@
-# Example procedure
+# Procedimento de exemplo
 
-A pump is showing abnormal vibration. Inspect the equipment, verify that it is safe to access, record the observed condition, and escalate if the vibration remains above the site's approved threshold.
+A bomba apresenta vibração anormal. Inspecione o equipamento, confirme se o acesso é seguro, registre a condição observada e escale a situação caso a vibração permaneça acima do limite aprovado pela unidade.
 
-Reference material and site-specific limits must be reviewed by a qualified operator before execution.
+O procedimento de referência e os limites específicos do local devem ser consultados por um operador qualificado antes da execução.
